@@ -10,14 +10,13 @@
                 <tr>
                     <td colspan="2">
                         <h2 id="updatedBalanceHeader">Payment History » Updated Balance: <span id="updatedBalance">{{$client->total_balance}}</span></h2>
-
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <!-- Display the payment history here -->
                         <iframe frameborder="0" height="300"
-                            src="{{ route('payment_history', $client->id) }}"style="border: 1px solid rgb(208, 208, 208);"
+                            src="{{ route('payment_history', $client->id) }}" style="border: 1px solid rgb(208, 208, 208);"
                             width="900"></iframe>
                     </td>
                 </tr>
@@ -25,13 +24,12 @@
                     <td colspan="2">
                         @php
                         $sum = 0;
-                      foreach ($client->payments as $payments ) {
-                        if($payments->type=='sales'){
-                            $sum = $sum + $payments->amount;
+                        foreach ($client->payments as $payments) {
+                            if ($payments->type == 'sales') {
+                                $sum += $payments->amount;
+                            }
                         }
-
-                      }
-                  @endphp
+                        @endphp
                         <!-- Display the total sum here -->
                         <h2 id="totalSumHeader">Add Payment » Total Sum: <span id="totalSum">{{$sum}}</span></h2>
                     </td>
@@ -57,6 +55,7 @@
                                         </td>
                                     </tr>
                                     <input type="hidden" name="type" value="1">
+                                    <input type="hidden" name="updated_balance" id="hiddenUpdatedBalance" value="{{ $client->total_balance }}">
                                     <tr>
                                         <td colspan="2" style="border-bottom: 1px solid rgb(221, 221, 221);"></td>
                                     </tr>
@@ -77,13 +76,21 @@
         document.getElementById('form').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            var amount = document.querySelector('input[name="amount"]').value;
-            var updatedBalance = document.getElementById('updated_balance').innerText;
+            var amount = parseFloat(document.querySelector('input[name="amount"]').value);
+            var currentBalance = parseFloat(document.getElementById('hiddenUpdatedBalance').value);
+            var commissionRate = {{ $client->commission_rate }};
 
-            var confirmation = confirm("You want to add sales " + amount + " and your total balance is " + updatedBalance + ". Do you add this sales into your record?");
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            var updatedBalance = currentBalance + (amount * commissionRate) - amount;
+            var confirmation = confirm("You want to add sales " + amount + " and your total balance will be " + updatedBalance.toFixed(2) + ". Do you want to add this sales into your record?");
 
             if (confirmation) {
-                this.submit();
+                document.getElementById('hiddenUpdatedBalance').value = updatedBalance.toFixed(2);
+                document.getElementById('form').submit(); // submit the form
             }
         });
     </script>

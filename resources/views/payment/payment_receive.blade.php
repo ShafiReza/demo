@@ -41,11 +41,13 @@
                     </div>
                     <div class="col-md-2 form-group">
                         <label for="client_name">Client Name:</label>
-                        <input type="text" id="client_name" name="client_name" class="form-control" value="{{ request('client_name') }}">
+                        <input type="text" id="client_name" name="client_name" class="form-control"
+                            value="{{ request('client_name') }}">
                     </div>
                     <div class="col-md-2 form-group">
                         <label for="provider_name">Provider Name:</label>
-                        <input type="text" id="provider_name" name="provider_name" class="form-control" value="{{ request('provider_name') }}">
+                        <input type="text" id="provider_name" name="provider_name" class="form-control"
+                            value="{{ request('provider_name') }}">
                     </div>
                     <div class="col-md-1 form-group">
                         <label for="type">Type:</label>
@@ -94,7 +96,8 @@
                         @foreach ($payments as $payment)
                             <tr>
                                 <td>{{ ++$sl }}</td>
-                                <td>{{ $payment->created_at }}</td>
+                                <td>{{ $payment->created_at->format('Y-m-d') }}</td>
+
                                 <td>{{ $payment->client->client_name }}</td>
                                 <td>{{ $payment->client->provider->provider_name }}</td>
                                 <td>{{ $payment->description }}</td>
@@ -111,12 +114,17 @@
                                         @media print {
                                             .no-print {
                                                 display: none !important;
-                                                font-size: 1px;
+
+                                            }
+
+                                            body {
+                                                font-size: 7pt;
                                             }
                                         }
                                     </style>
                                     <div class="no-print">
-                                        <form action="{{ route('payment.destroy', $payment->id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this provider?');">
+                                        <form action="{{ route('payment.destroy', $payment->id) }}" method="post"
+                                            onsubmit="return confirm('Are you sure you want to delete this provider?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -144,7 +152,7 @@
                             <td>{{ $totalCredit = $payments->where('type', 'credit')->sum('amount') }}</td>
 
                             <td>{{ $totalPaid = $payments->where('type', 'sales')->sum('amount') }}</td>
-                            <td>{{$totalCommission = $payments->where('type', 'sales')->sum('commission');}}</td>
+                            <td>{{ $totalCommission = $payments->where('type', 'sales')->sum('commission') }}</td>
                             <td style="color: green;">
                                 @php
                                     // Get the last payment and retrieve its updated balance

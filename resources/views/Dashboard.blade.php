@@ -105,21 +105,30 @@
                             <tbody>
                                 @php
                                     $totalCommission = 0; // Initialize total commission outside the loop
+                                    $groupedClients = $clients->groupBy('type'); // Group clients by type
                                 @endphp
 
-                                @foreach ($clients as $client)
-                                    <tr>
-                                        <td>{{ $client->type }}</td>
-                                        <td>{{ $client->sales }}</td>
-                                        @php
+                                @foreach ($groupedClients as $type => $clientsOfType)
+                                    @php
+                                        $totalSales = $clientsOfType->sum('sales');
+                                        $totalCommissionForType = 0;
+
+                                        foreach ($clientsOfType as $client) {
                                             // Calculate commission for this client
                                             $commission = $payments
                                                 ->where('client_id', $client->id)
                                                 ->where('type', 'sales')
                                                 ->sum('commission');
-                                            $totalCommission += $commission; // Update total commission
-                                        @endphp
-                                        <td>{{ $commission }}</td>
+                                            $totalCommissionForType += $commission;
+                                        }
+
+                                        $totalCommission += $totalCommissionForType; // Update total commission
+                                    @endphp
+
+                                    <tr>
+                                        <td>{{ $type }}</td>
+                                        <td>{{ $totalSales }}</td>
+                                        <td>{{ $totalCommissionForType }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -127,9 +136,8 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
+
         <!-- Second card content -->
 
     </div>

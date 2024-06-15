@@ -53,6 +53,15 @@
             document.body.innerHTML = originalContent;
         }
     </script>
+      <style>
+        @media print {
+
+
+            body {
+                font-size: 7pt;
+            }
+        }
+    </style>
 </div>
 </div>
 @endsection

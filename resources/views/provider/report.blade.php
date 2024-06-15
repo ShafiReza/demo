@@ -29,7 +29,7 @@
                         <th>Opening Balance</th>
                         <th>Receive</th>
                         <th>Total Balance</th>
-                        <th>Action</th>
+                        <th class="no-print"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +41,7 @@
                             <td>{{ $provider->opening_balance }}</td>
                             <td>{{ $provider->receive }}</td>
                             <td>{{ $provider->total_balance }}</td>
-                            <td>
+                            <td class="no-print">
                                 <form action="{{ route('provider.destroy', $provider->id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this provider?');">
                                     @csrf
                                     @method('DELETE')
@@ -79,6 +79,16 @@
                     document.body.innerHTML = originalContent;
                 }
             </script>
+             <style>
+                @media print {
+                    .no-print {
+                        display: none !important;
+                    }
+                    body {
+                        font-size: 7pt;
+                    }
+                }
+            </style>
         </div>
     </div>
 @endsection

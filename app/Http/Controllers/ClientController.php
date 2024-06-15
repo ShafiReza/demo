@@ -44,7 +44,7 @@ class ClientController extends Controller
 
         //dd($request->all());
         // Create a new client instance
-    
+
         $client = new Client($validatedData);
         //$provider = new Provider();
         $client->client_name = $request->client_name;
@@ -183,6 +183,7 @@ class ClientController extends Controller
         ]);
 
         // Find the client
+
         $client = Client::findOrFail($id);
         $provider = $client->provider;
         // Calculate the commission based on the client's current commission rate
@@ -212,7 +213,7 @@ class ClientController extends Controller
         session()->flash('message', 'Sales added successfully!');
 
         // Redirect to the index page
-        return redirect()->route('client.index');
+         return redirect()->route('client.index')->with('updated_balance');
     }
 
 
